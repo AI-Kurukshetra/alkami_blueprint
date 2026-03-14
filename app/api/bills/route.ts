@@ -1,10 +1,10 @@
-import { createBillPayment, listBills } from "@banking/database";
+import { createBillPayment, listAuthenticatedBills } from "@banking/database";
 import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "../../../lib/supabase/server";
 
 export async function GET() {
   const supabase = await createSupabaseServerClient();
-  const data = await listBills(supabase);
+  const data = await listAuthenticatedBills(supabase);
   return NextResponse.json({ data });
 }
 

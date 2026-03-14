@@ -1,4 +1,4 @@
-import { getDashboardSnapshot } from "@banking/database";
+import { getAuthenticatedDashboardSnapshot } from "@banking/database";
 import { Card, CardDescription, CardTitle, PageHeader } from "@banking/ui";
 import { formatCurrency, formatDate, maskAccount } from "@banking/utils";
 import { createSupabaseServerClient } from "../../../lib/supabase/server";
@@ -7,7 +7,7 @@ import { MetricCard } from "../../../components/metric-card";
 
 export default async function DashboardPage() {
   const supabase = await createSupabaseServerClient();
-  const snapshot = await getDashboardSnapshot(supabase);
+  const snapshot = await getAuthenticatedDashboardSnapshot(supabase);
 
   return (
     <div className="space-y-6">

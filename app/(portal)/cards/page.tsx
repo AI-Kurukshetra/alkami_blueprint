@@ -1,4 +1,4 @@
-import { listCards } from "@banking/database";
+import { listAuthenticatedCards } from "@banking/database";
 import { Badge, Button, Card, CardDescription, CardTitle, PageHeader } from "@banking/ui";
 import { FlashBanner } from "../../../components/flash-banner";
 import { createSupabaseServerClient } from "../../../lib/supabase/server";
@@ -10,7 +10,7 @@ export default async function CardsPage({
   searchParams?: Record<string, string | string[] | undefined>;
 }) {
   const supabase = await createSupabaseServerClient();
-  const cards = await listCards(supabase);
+  const cards = await listAuthenticatedCards(supabase);
   const message =
     typeof searchParams?.message === "string" ? searchParams.message : undefined;
   const error =

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export function FlashBanner({
@@ -13,6 +13,13 @@ export function FlashBanner({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [visibleMessage, setVisibleMessage] = useState(message);
+
+  useEffect(() => {
+    if (message) {
+      setVisibleMessage(message);
+    }
+  }, [message]);
 
   useEffect(() => {
     if (!message) {
@@ -28,7 +35,7 @@ export function FlashBanner({
     router.replace(nextUrl, { scroll: false });
   }, [message, pathname, router, searchParams]);
 
-  if (!message) {
+  if (!visibleMessage) {
     return null;
   }
 
@@ -39,5 +46,5 @@ export function FlashBanner({
         ? "rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700"
         : "rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-700";
 
-  return <div className={className}>{message}</div>;
+  return <div className={className}>{visibleMessage}</div>;
 }

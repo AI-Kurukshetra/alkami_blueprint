@@ -1,4 +1,4 @@
-import { listAccounts, quoteTransfer } from "@banking/database";
+import { listAuthenticatedAccounts, quoteTransfer } from "@banking/database";
 import { Badge, Button, Card, CardDescription, CardTitle, PageHeader } from "@banking/ui";
 import { formatCurrency } from "@banking/utils";
 import { FlashBanner } from "../../../components/flash-banner";
@@ -11,7 +11,7 @@ export default async function TransfersPage({
   searchParams?: Record<string, string | string[] | undefined>;
 }) {
   const supabase = await createSupabaseServerClient();
-  const accounts = await listAccounts(supabase);
+  const accounts = await listAuthenticatedAccounts(supabase);
   const message =
     typeof searchParams?.message === "string" ? searchParams.message : undefined;
   const error =

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { listAccounts, listDocuments } from "@banking/database";
+import { listAuthenticatedAccounts, listAuthenticatedDocuments } from "@banking/database";
 import { Badge, Button, Card, CardDescription, CardTitle, PageHeader } from "@banking/ui";
 import { formatCurrency, maskAccount } from "@banking/utils";
 import { createSupabaseServerClient } from "../../../lib/supabase/server";
@@ -13,8 +13,8 @@ function getStatementLabel(storagePath: string) {
 export default async function AccountsPage() {
   const supabase = await createSupabaseServerClient();
   const [accounts, statements] = await Promise.all([
-    listAccounts(supabase),
-    listDocuments(supabase)
+    listAuthenticatedAccounts(supabase),
+    listAuthenticatedDocuments(supabase)
   ]);
 
   return (

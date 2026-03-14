@@ -273,12 +273,81 @@ export async function listTransactions(
   }));
 }
 
+export async function listAuthenticatedTransactions(
+  client?: BankingSupabaseClient | null
+): Promise<Transaction[]> {
+  if (!hasSupabaseEnv() || !client) {
+    return mockTransactions;
+  }
+
+  const accounts = await listAuthenticatedAccounts(client);
+  const accountIds = accounts.map((account) => account.id);
+
+  if (accountIds.length === 0) {
+    return [];
+  }
+
+  const privilegedClient = createServiceRoleSupabaseClient() ?? client;
+  const { data, error } = await privilegedClient
+    .from("transactions")
+    .select("id, account_id, amount, direction, type, category, description, merchant_name, posted_at")
+    .in("account_id", accountIds)
+    .order("posted_at", { ascending: false });
+
+  if (error) {
+    throw error;
+  }
+
+  const rows = (data ?? []) as Record<string, unknown>[];
+
+  return rows.map((item) => ({
+    id: asString(item.id),
+    accountId: asString(item.account_id ?? item.accountId),
+    amount: asNumber(item.amount),
+    direction: asString(item.direction) as Transaction["direction"],
+    type: asString(item.type) as Transaction["type"],
+    category: asString(item.category),
+    description: asString(item.description),
+    merchantName: item.merchant_name ? asString(item.merchant_name) : null,
+    postedAt: asString(item.posted_at ?? item.postedAt)
+  }));
+}
+
 export async function searchTransactions(
   input: unknown,
   client?: BankingSupabaseClient | null
 ): Promise<Transaction[]> {
   const query = transactionSearchSchema.parse(input ?? {});
   const transactions = await listTransactions(client);
+
+  return transactions
+    .filter((transaction) =>
+      query.accountId ? transaction.accountId === query.accountId : true
+    )
+    .filter((transaction) =>
+      query.direction ? transaction.direction === query.direction : true
+    )
+    .filter((transaction) =>
+      query.category
+        ? transaction.category.toLowerCase() === query.category.toLowerCase()
+        : true
+    )
+    .filter((transaction) =>
+      query.q
+        ? `${transaction.description} ${transaction.merchantName ?? ""}`
+            .toLowerCase()
+            .includes(query.q.toLowerCase())
+        : true
+    )
+    .slice(0, query.limit);
+}
+
+export async function searchAuthenticatedTransactions(
+  input: unknown,
+  client?: BankingSupabaseClient | null
+): Promise<Transaction[]> {
+  const query = transactionSearchSchema.parse(input ?? {});
+  const transactions = await listAuthenticatedTransactions(client);
 
   return transactions
     .filter((transaction) =>
@@ -326,6 +395,41 @@ export async function listBills(
   }));
 }
 
+export async function listAuthenticatedBills(
+  client?: BankingSupabaseClient | null
+): Promise<Bill[]> {
+  if (!hasSupabaseEnv() || !client) {
+    return mockBills;
+  }
+
+  const userId = await requireAuthenticatedUserId(client);
+  const privilegedClient = createServiceRoleSupabaseClient() ?? client;
+  const { data, error } = await privilegedClient
+    .from("bills")
+    .select("id, user_id, amount, due_date, status, frequency, payees(name)")
+    .eq("user_id", userId)
+    .order("due_date", { ascending: true });
+
+  if (error) {
+    throw error;
+  }
+
+  const rows = (data ?? []) as Record<string, unknown>[];
+
+  return rows.map((item) => ({
+    id: asString(item.id),
+    userId: asString(item.user_id ?? item.userId),
+    payeeName:
+      typeof item.payees === "object" && item.payees && "name" in item.payees
+        ? asString((item.payees as { name?: unknown }).name)
+        : asString(item.payee_name ?? item.payeeName ?? item.name),
+    amount: asNumber(item.amount),
+    dueDate: asString(item.due_date ?? item.dueDate),
+    status: asString(item.status) as Bill["status"],
+    frequency: asString(item.frequency)
+  }));
+}
+
 export async function listCards(
   client?: BankingSupabaseClient | null
 ): Promise<Card[]> {
@@ -335,6 +439,42 @@ export async function listCards(
     "*",
     client
   );
+
+  return rows.map((item) => ({
+    id: asString(item.id),
+    userId: asString(item.user_id ?? item.userId),
+    accountId: asString(item.account_id ?? item.accountId),
+    cardType: asString(item.card_type ?? item.cardType) as Card["cardType"],
+    network: asString(item.network),
+    last4: asString(item.last4),
+    status: asString(item.status) as Card["status"],
+    spendLimit:
+      item.spend_limit === null || item.spendLimit === null
+        ? null
+        : asNumber(item.spend_limit ?? item.spendLimit)
+  }));
+}
+
+export async function listAuthenticatedCards(
+  client?: BankingSupabaseClient | null
+): Promise<Card[]> {
+  if (!hasSupabaseEnv() || !client) {
+    return mockCards;
+  }
+
+  const userId = await requireAuthenticatedUserId(client);
+  const privilegedClient = createServiceRoleSupabaseClient() ?? client;
+  const { data, error } = await privilegedClient
+    .from("cards")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    throw error;
+  }
+
+  const rows = (data ?? []) as Record<string, unknown>[];
 
   return rows.map((item) => ({
     id: asString(item.id),
@@ -488,6 +628,37 @@ export async function listNotifications(
   }));
 }
 
+export async function listAuthenticatedNotifications(
+  client?: BankingSupabaseClient | null
+): Promise<NotificationItem[]> {
+  if (!hasSupabaseEnv() || !client) {
+    return mockNotifications;
+  }
+
+  const userId = await requireAuthenticatedUserId(client);
+  const privilegedClient = createServiceRoleSupabaseClient() ?? client;
+  const { data, error } = await privilegedClient
+    .from("notifications")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    throw error;
+  }
+
+  const rows = (data ?? []) as Record<string, unknown>[];
+
+  return rows.map((item) => ({
+    id: asString(item.id),
+    userId: asString(item.user_id ?? item.userId),
+    type: asString(item.type),
+    message: asString(item.message),
+    read: Boolean(item.read),
+    createdAt: asString(item.created_at ?? item.createdAt)
+  }));
+}
+
 export async function listSupportTickets(
   client?: BankingSupabaseClient | null
 ): Promise<SupportTicket[]> {
@@ -497,6 +668,38 @@ export async function listSupportTickets(
     "*",
     client
   );
+
+  return rows.map((item) => ({
+    id: asString(item.id),
+    userId: asString(item.user_id ?? item.userId),
+    subject: asString(item.subject),
+    status: asString(item.status) as SupportTicket["status"],
+    priority: asString(item.priority) as SupportTicket["priority"],
+    latestMessage: asString(item.latest_message ?? item.latestMessage),
+    createdAt: asString(item.created_at ?? item.createdAt)
+  }));
+}
+
+export async function listAuthenticatedSupportTickets(
+  client?: BankingSupabaseClient | null
+): Promise<SupportTicket[]> {
+  if (!hasSupabaseEnv() || !client) {
+    return mockSupportTickets;
+  }
+
+  const userId = await requireAuthenticatedUserId(client);
+  const privilegedClient = createServiceRoleSupabaseClient() ?? client;
+  const { data, error } = await privilegedClient
+    .from("support_tickets")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    throw error;
+  }
+
+  const rows = (data ?? []) as Record<string, unknown>[];
 
   return rows.map((item) => ({
     id: asString(item.id),
@@ -529,6 +732,37 @@ export async function listDocuments(
   }));
 }
 
+export async function listAuthenticatedDocuments(
+  client?: BankingSupabaseClient | null
+): Promise<StatementDocument[]> {
+  if (!hasSupabaseEnv() || !client) {
+    return mockDocuments;
+  }
+
+  const userId = await requireAuthenticatedUserId(client);
+  const privilegedClient = createServiceRoleSupabaseClient() ?? client;
+  const { data, error } = await privilegedClient
+    .from("documents")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    throw error;
+  }
+
+  const rows = (data ?? []) as Record<string, unknown>[];
+
+  return rows.map((item) => ({
+    id: asString(item.id),
+    userId: asString(item.user_id ?? item.userId),
+    documentType: asString(item.document_type ?? item.documentType),
+    storagePath: asString(item.storage_path ?? item.storagePath),
+    status: asString(item.status),
+    createdAt: asString(item.created_at ?? item.createdAt)
+  }));
+}
+
 export async function listDeviceSessions(
   client?: BankingSupabaseClient | null
 ): Promise<DeviceSession[]> {
@@ -538,6 +772,40 @@ export async function listDeviceSessions(
     "*",
     client
   );
+
+  return rows.map((item) => ({
+    id: asString(item.id),
+    userId: asString(item.user_id ?? item.userId),
+    deviceFingerprint: asString(
+      item.device_fingerprint ?? item.deviceFingerprint
+    ),
+    userAgent: asString(item.user_agent ?? item.userAgent),
+    trusted: Boolean(item.trusted),
+    lastSeenAt: asString(item.last_seen_at ?? item.lastSeenAt),
+    createdAt: asString(item.created_at ?? item.createdAt)
+  }));
+}
+
+export async function listAuthenticatedDeviceSessions(
+  client?: BankingSupabaseClient | null
+): Promise<DeviceSession[]> {
+  if (!hasSupabaseEnv() || !client) {
+    return mockDeviceSessions;
+  }
+
+  const userId = await requireAuthenticatedUserId(client);
+  const privilegedClient = createServiceRoleSupabaseClient() ?? client;
+  const { data, error } = await privilegedClient
+    .from("device_sessions")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    throw error;
+  }
+
+  const rows = (data ?? []) as Record<string, unknown>[];
 
   return rows.map((item) => ({
     id: asString(item.id),
@@ -593,6 +861,37 @@ export async function listAuditLogs(
   }));
 }
 
+export async function listAuthenticatedAuditLogs(
+  client?: BankingSupabaseClient | null
+): Promise<AuditLog[]> {
+  if (!hasSupabaseEnv() || !client) {
+    return mockAuditLogs;
+  }
+
+  const userId = await requireAuthenticatedUserId(client);
+  const privilegedClient = createServiceRoleSupabaseClient() ?? client;
+  const { data, error } = await privilegedClient
+    .from("audit_logs")
+    .select("*")
+    .eq("user_id", userId)
+    .order("timestamp", { ascending: false });
+
+  if (error) {
+    throw error;
+  }
+
+  const rows = (data ?? []) as Record<string, unknown>[];
+
+  return rows.map((item) => ({
+    id: asString(item.id),
+    userId: item.user_id ? asString(item.user_id) : null,
+    action: asString(item.action),
+    entity: asString(item.entity),
+    entityId: item.entity_id ? asString(item.entity_id) : null,
+    timestamp: asString(item.timestamp)
+  }));
+}
+
 export async function listUsers(
   client?: BankingSupabaseClient | null
 ): Promise<UserProfile[]> {
@@ -632,6 +931,37 @@ export async function listFinancialGoals(
   }));
 }
 
+export async function listAuthenticatedFinancialGoals(
+  client?: BankingSupabaseClient | null
+): Promise<FinancialGoal[]> {
+  if (!hasSupabaseEnv() || !client) {
+    return mockDashboardSnapshot.financialGoals;
+  }
+
+  const userId = await requireAuthenticatedUserId(client);
+  const privilegedClient = createServiceRoleSupabaseClient() ?? client;
+  const { data, error } = await privilegedClient
+    .from("financial_goals")
+    .select("*")
+    .eq("user_id", userId)
+    .order("target_date", { ascending: true });
+
+  if (error) {
+    throw error;
+  }
+
+  const rows = (data ?? []) as Record<string, unknown>[];
+
+  return rows.map((item) => ({
+    id: asString(item.id),
+    userId: asString(item.user_id ?? item.userId),
+    name: asString(item.name),
+    currentAmount: asNumber(item.current_amount ?? item.currentAmount),
+    targetAmount: asNumber(item.target_amount ?? item.targetAmount),
+    targetDate: asString(item.target_date ?? item.targetDate)
+  }));
+}
+
 export async function getDashboardSnapshot(
   client?: BankingSupabaseClient | null
 ): Promise<DashboardSnapshot> {
@@ -645,6 +975,42 @@ export async function getDashboardSnapshot(
     listNotifications(client),
     listBills(client),
     listFinancialGoals(client)
+  ]);
+
+  const netWorth = accounts.reduce((sum, account) => sum + account.balance, 0);
+  const monthToDateSpend = transactions
+    .filter((item) => item.direction === "debit")
+    .reduce((sum, item) => sum + item.amount, 0);
+  const upcomingBills = bills.reduce((sum, bill) => sum + bill.amount, 0);
+  const inflows = transactions
+    .filter((item) => item.direction === "credit")
+    .reduce((sum, item) => sum + item.amount, 0);
+
+  return {
+    netWorth,
+    monthToDateSpend,
+    upcomingBills,
+    cashFlow: inflows - monthToDateSpend,
+    accounts,
+    recentTransactions: transactions.slice(0, 8),
+    financialGoals: goals,
+    notifications
+  };
+}
+
+export async function getAuthenticatedDashboardSnapshot(
+  client?: BankingSupabaseClient | null
+): Promise<DashboardSnapshot> {
+  if (!hasSupabaseEnv() || !client) {
+    return mockDashboardSnapshot;
+  }
+
+  const [accounts, transactions, notifications, bills, goals] = await Promise.all([
+    listAuthenticatedAccounts(client),
+    listAuthenticatedTransactions(client),
+    listAuthenticatedNotifications(client),
+    listAuthenticatedBills(client),
+    listAuthenticatedFinancialGoals(client)
   ]);
 
   const netWorth = accounts.reduce((sum, account) => sum + account.balance, 0);

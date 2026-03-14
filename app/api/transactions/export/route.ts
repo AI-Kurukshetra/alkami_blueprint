@@ -1,4 +1,4 @@
-import { searchTransactions } from "@banking/database";
+import { searchAuthenticatedTransactions } from "@banking/database";
 import { createSupabaseServerClient } from "../../../../lib/supabase/server";
 
 function toCsv(
@@ -89,7 +89,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const format = searchParams.get("format") ?? "csv";
   const supabase = await createSupabaseServerClient();
-  const rows = await searchTransactions(
+  const rows = await searchAuthenticatedTransactions(
     Object.fromEntries(searchParams.entries()),
     supabase
   );

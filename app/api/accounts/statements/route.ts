@@ -1,4 +1,8 @@
-import { listAccounts, listDocuments, listTransactions } from "@banking/database";
+import {
+  listAuthenticatedAccounts,
+  listAuthenticatedDocuments,
+  listAuthenticatedTransactions
+} from "@banking/database";
 import { createSupabaseServerClient } from "../../../../lib/supabase/server";
 
 type DocumentKind = "statement" | "account-summary" | "initial-disclosure";
@@ -104,9 +108,9 @@ export async function GET(request: Request) {
   const statementId = searchParams.get("statementId");
   const generatedAt = new Date().toISOString();
   const [documents, accounts, transactions] = await Promise.all([
-    listDocuments(supabase),
-    listAccounts(supabase),
-    listTransactions(supabase)
+    listAuthenticatedDocuments(supabase),
+    listAuthenticatedAccounts(supabase),
+    listAuthenticatedTransactions(supabase)
   ]);
 
   const primaryAccount = accounts[0] ?? null;

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { searchTransactions } from "@banking/database";
+import { searchAuthenticatedTransactions } from "@banking/database";
 import { Badge, Button, Card, CardDescription, CardTitle, PageHeader } from "@banking/ui";
 import { formatCurrency, formatDate } from "@banking/utils";
 import { createSupabaseServerClient } from "../../../lib/supabase/server";
@@ -16,7 +16,7 @@ export default async function TransactionsPage({
     typeof searchParams?.category === "string" ? searchParams.category : undefined;
 
   const supabase = await createSupabaseServerClient();
-  const transactions = await searchTransactions(
+  const transactions = await searchAuthenticatedTransactions(
     { q, direction, category, limit: 100 },
     supabase
   );

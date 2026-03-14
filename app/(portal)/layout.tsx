@@ -11,10 +11,14 @@ export default async function PortalLayout({
 }: {
   children: ReactNode;
 }) {
-  await requireUser();
+  const authState = await requireUser();
+  const navigation =
+    authState.profile?.role === "admin"
+      ? [...customerNavigation, { href: "/admin", label: "Admin" }]
+      : customerNavigation;
 
   return (
-    <AppShell navigation={customerNavigation} title="NextGen Bank">
+    <AppShell navigation={navigation} title="NextGen Bank">
       <div className="flex justify-end">
         <form action={signoutAction}>
           <button

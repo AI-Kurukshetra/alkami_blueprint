@@ -1,4 +1,4 @@
-import { listAuditLogs, listDeviceSessions } from "@banking/database";
+import { listAuthenticatedAuditLogs, listAuthenticatedDeviceSessions } from "@banking/database";
 import { Badge, Button, Card, CardDescription, CardTitle, PageHeader } from "@banking/ui";
 import { formatDate } from "@banking/utils";
 import { FlashBanner } from "../../../components/flash-banner";
@@ -13,8 +13,8 @@ export default async function SettingsPage({
 }) {
   const supabase = await createSupabaseServerClient();
   const [auditLogs, devices] = await Promise.all([
-    listAuditLogs(supabase),
-    listDeviceSessions(supabase)
+    listAuthenticatedAuditLogs(supabase),
+    listAuthenticatedDeviceSessions(supabase)
   ]);
   const message =
     typeof searchParams?.message === "string" ? searchParams.message : undefined;

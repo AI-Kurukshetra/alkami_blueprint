@@ -1,10 +1,10 @@
-import { listDeviceSessions, setDeviceTrust } from "@banking/database";
+import { listAuthenticatedDeviceSessions, setDeviceTrust } from "@banking/database";
 import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "../../../../lib/supabase/server";
 
 export async function GET() {
   const supabase = await createSupabaseServerClient();
-  const data = await listDeviceSessions(supabase);
+  const data = await listAuthenticatedDeviceSessions(supabase);
   return NextResponse.json({ data });
 }
 

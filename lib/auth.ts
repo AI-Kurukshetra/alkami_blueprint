@@ -57,12 +57,10 @@ export async function requireAdmin() {
 
   if (
     hasSupabaseEnv() &&
-    authState.profile &&
-    authState.profile.role !== "admin"
+    (!authState.profile || authState.profile.role !== "admin")
   ) {
     redirect("/dashboard");
   }
 
   return authState;
 }
-

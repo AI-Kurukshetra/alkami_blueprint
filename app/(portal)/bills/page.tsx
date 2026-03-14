@@ -1,4 +1,4 @@
-import { listAccounts, listBills } from "@banking/database";
+import { listAuthenticatedAccounts, listAuthenticatedBills } from "@banking/database";
 import { Badge, Button, Card, CardDescription, CardTitle, PageHeader } from "@banking/ui";
 import { formatCurrency, formatDate } from "@banking/utils";
 import { FlashBanner } from "../../../components/flash-banner";
@@ -12,8 +12,8 @@ export default async function BillsPage({
 }) {
   const supabase = await createSupabaseServerClient();
   const [bills, accounts] = await Promise.all([
-    listBills(supabase),
-    listAccounts(supabase)
+    listAuthenticatedBills(supabase),
+    listAuthenticatedAccounts(supabase)
   ]);
   const checkingAccounts = accounts.filter((account) => account.accountType === "checking");
   const message =

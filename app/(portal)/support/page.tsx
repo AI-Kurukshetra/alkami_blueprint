@@ -1,4 +1,4 @@
-import { listSupportTickets, streamSupportChat } from "@banking/database";
+import { listAuthenticatedSupportTickets, streamSupportChat } from "@banking/database";
 import { Badge, Button, Card, CardDescription, CardTitle, PageHeader } from "@banking/ui";
 import { formatDate } from "@banking/utils";
 import { FlashBanner } from "../../../components/flash-banner";
@@ -12,7 +12,7 @@ export default async function SupportPage({
 }) {
   const supabase = await createSupabaseServerClient();
   const [tickets, chat] = await Promise.all([
-    listSupportTickets(supabase),
+    listAuthenticatedSupportTickets(supabase),
     streamSupportChat()
   ]);
   const message =
