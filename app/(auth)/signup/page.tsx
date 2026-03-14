@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Button, Card, CardDescription, CardTitle } from "@banking/ui";
+import { Card, CardDescription, CardTitle } from "@banking/ui";
 import { hasSupabaseEnv } from "@banking/database";
 import { getAuthState } from "../../../lib/auth";
 import { FlashBanner } from "../../../components/flash-banner";
+import { FormSubmitButton } from "../../../components/form-submit-button";
 import { signupAction } from "../actions";
 
 export default async function SignupPage({
@@ -37,9 +38,9 @@ export default async function SignupPage({
             <input name="setupMfa" type="checkbox" />
             Set up optional TOTP MFA right after account creation
           </label>
-          <Button className="w-full" type="submit">
+          <FormSubmitButton className="w-full" pendingLabel="Creating account..." type="submit">
             Open profile
-          </Button>
+          </FormSubmitButton>
         </form>
         <p className="text-sm text-slate-500">
           Already have an account?{" "}

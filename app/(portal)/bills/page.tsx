@@ -2,6 +2,7 @@ import { listAuthenticatedAccounts, listAuthenticatedBills } from "@banking/data
 import { Badge, Button, Card, CardDescription, CardTitle, PageHeader } from "@banking/ui";
 import { formatCurrency, formatDate } from "@banking/utils";
 import { FlashBanner } from "../../../components/flash-banner";
+import { FormSubmitButton } from "../../../components/form-submit-button";
 import { createSupabaseServerClient } from "../../../lib/supabase/server";
 import { payBillAction, scheduleBillAction } from "./actions";
 
@@ -60,7 +61,9 @@ export default async function BillsPage({
                       </option>
                     ))}
                   </select>
-                  <Button type="submit" variant="secondary">Pay now</Button>
+                  <FormSubmitButton pendingLabel="Paying..." type="submit" variant="secondary">
+                    Pay now
+                  </FormSubmitButton>
                 </form>
               ) : null}
             </div>
@@ -88,7 +91,9 @@ export default async function BillsPage({
             <input name="autopay" type="checkbox" />
             Enable autopay for this bill
           </label>
-          <Button className="md:col-span-2" type="submit">Schedule bill</Button>
+          <FormSubmitButton className="md:col-span-2" pendingLabel="Scheduling..." type="submit">
+            Schedule bill
+          </FormSubmitButton>
         </form>
       </Card>
       <Card className="space-y-3">

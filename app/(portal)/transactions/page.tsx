@@ -2,6 +2,7 @@ import Link from "next/link";
 import { searchAuthenticatedTransactions } from "@banking/database";
 import { Badge, Button, Card, CardDescription, CardTitle, PageHeader } from "@banking/ui";
 import { formatCurrency, formatDate } from "@banking/utils";
+import { FormSubmitButton } from "../../../components/form-submit-button";
 import { createSupabaseServerClient } from "../../../lib/supabase/server";
 
 export default async function TransactionsPage({
@@ -48,7 +49,9 @@ export default async function TransactionsPage({
             <option value="credit">Credit</option>
           </select>
           <input className="h-11 rounded-2xl border border-slate-200 px-4" defaultValue={category} name="category" placeholder="Category" />
-          <Button type="submit">Apply</Button>
+          <FormSubmitButton pendingLabel="Applying..." type="submit">
+            Apply
+          </FormSubmitButton>
           <div className="flex gap-2">
             <Button asChild type="button" variant="secondary">
               <Link href={`/api/transactions/export?${exportParams.toString()}${exportParams.size ? "&" : ""}format=csv`}>CSV</Link>

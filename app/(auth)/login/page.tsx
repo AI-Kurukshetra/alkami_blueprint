@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Button, Card, CardDescription, CardTitle } from "@banking/ui";
+import { Card, CardDescription, CardTitle } from "@banking/ui";
 import { hasSupabaseEnv } from "@banking/database";
 import { getAuthState } from "../../../lib/auth";
 import { FlashBanner } from "../../../components/flash-banner";
+import { FormSubmitButton } from "../../../components/form-submit-button";
 import { loginAction } from "../actions";
 
 export default async function LoginPage({
@@ -40,9 +41,9 @@ export default async function LoginPage({
             <input name="trustDevice" type="checkbox" />
             Trust this device after MFA verification
           </label>
-          <Button className="w-full" type="submit">
+          <FormSubmitButton className="w-full" pendingLabel="Signing in..." type="submit">
             Continue
-          </Button>
+          </FormSubmitButton>
         </form>
         <p className="text-sm text-slate-500">
           Need an account?{" "}

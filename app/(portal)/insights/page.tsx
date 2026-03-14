@@ -1,6 +1,7 @@
 import { runInsightsAnalysis } from "@banking/database";
-import { Badge, Button, Card, CardDescription, CardTitle, PageHeader } from "@banking/ui";
+import { Badge, Card, CardDescription, CardTitle, PageHeader } from "@banking/ui";
 import { FlashBanner } from "../../../components/flash-banner";
+import { FormSubmitButton } from "../../../components/form-submit-button";
 import { createSupabaseServerClient } from "../../../lib/supabase/server";
 import { refreshInsightsAction } from "./actions";
 
@@ -31,7 +32,9 @@ export default async function InsightsPage({
             <CardDescription>Re-run server-side insights using your latest account activity.</CardDescription>
           </div>
           <form action={refreshInsightsAction}>
-            <Button type="submit">Refresh insights</Button>
+            <FormSubmitButton pendingLabel="Refreshing..." type="submit">
+              Refresh insights
+            </FormSubmitButton>
           </form>
         </div>
       </Card>

@@ -71,6 +71,10 @@ function asNumber(value: unknown) {
   return Number(value ?? 0);
 }
 
+function emptyStringToUndefined(value: unknown) {
+  return typeof value === "string" && value.trim() === "" ? undefined : value;
+}
+
 const transferInputSchema = z
   .object({
     fromAccountId: z.string().min(1),
@@ -219,10 +223,13 @@ const loanPaymentSchema = z.object({
 });
 
 const transactionSearchSchema = z.object({
-  q: z.string().optional(),
-  accountId: z.string().optional(),
-  direction: z.enum(["debit", "credit"]).optional(),
-  category: z.string().optional(),
+  q: z.preprocess(emptyStringToUndefined, z.string().optional()),
+  accountId: z.preprocess(emptyStringToUndefined, z.string().optional()),
+  direction: z.preprocess(
+    emptyStringToUndefined,
+    z.enum(["debit", "credit"]).optional()
+  ),
+  category: z.preprocess(emptyStringToUndefined, z.string().optional()),
   limit: z.coerce.number().int().positive().max(200).default(50)
 });
 

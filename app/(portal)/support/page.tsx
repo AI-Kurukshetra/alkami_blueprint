@@ -1,7 +1,8 @@
 import { listAuthenticatedSupportTickets, streamSupportChat } from "@banking/database";
-import { Badge, Button, Card, CardDescription, CardTitle, PageHeader } from "@banking/ui";
+import { Badge, Card, CardDescription, CardTitle, PageHeader } from "@banking/ui";
 import { formatDate } from "@banking/utils";
 import { FlashBanner } from "../../../components/flash-banner";
+import { FormSubmitButton } from "../../../components/form-submit-button";
 import { createSupabaseServerClient } from "../../../lib/supabase/server";
 import { createSupportTicketAction } from "./actions";
 
@@ -83,7 +84,9 @@ export default async function SupportPage({
           </select>
           <div className="hidden md:block" />
           <textarea className="min-h-32 rounded-2xl border border-slate-200 px-4 py-3 md:col-span-2" name="message" placeholder="Describe the issue or request" required />
-          <Button className="md:col-span-2" type="submit">Open support ticket</Button>
+          <FormSubmitButton className="md:col-span-2" pendingLabel="Opening ticket..." type="submit">
+            Open support ticket
+          </FormSubmitButton>
         </form>
       </Card>
     </div>

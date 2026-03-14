@@ -1,7 +1,8 @@
 import { getAuthenticatedLoanDetails, listAuthenticatedAccounts } from "@banking/database";
-import { Badge, Button, Card, CardDescription, CardTitle, PageHeader } from "@banking/ui";
+import { Badge, Card, CardDescription, CardTitle, PageHeader } from "@banking/ui";
 import { formatCurrency, formatDate } from "@banking/utils";
 import { FlashBanner } from "../../../components/flash-banner";
+import { FormSubmitButton } from "../../../components/form-submit-button";
 import { createSupabaseServerClient } from "../../../lib/supabase/server";
 import { submitLoanPaymentAction } from "./actions";
 
@@ -88,7 +89,9 @@ export default async function LoansPage({
                 step="0.01"
                 type="number"
               />
-              <Button type="submit">Pay now</Button>
+              <FormSubmitButton pendingLabel="Processing..." type="submit">
+                Pay now
+              </FormSubmitButton>
             </form>
           </Card>
         ))}

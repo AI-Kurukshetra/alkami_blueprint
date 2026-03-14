@@ -1,7 +1,8 @@
 import { listAuthenticatedAuditLogs, listAuthenticatedDeviceSessions } from "@banking/database";
-import { Badge, Button, Card, CardDescription, CardTitle, PageHeader } from "@banking/ui";
+import { Badge, Card, CardDescription, CardTitle, PageHeader } from "@banking/ui";
 import { formatDate } from "@banking/utils";
 import { FlashBanner } from "../../../components/flash-banner";
+import { FormSubmitButton } from "../../../components/form-submit-button";
 import { MfaManager } from "../../../components/mfa-manager";
 import { createSupabaseServerClient } from "../../../lib/supabase/server";
 import { updateDeviceTrustAction } from "./actions";
@@ -56,9 +57,9 @@ export default async function SettingsPage({
                   <form action={updateDeviceTrustAction}>
                     <input name="deviceSessionId" type="hidden" value={device.id} />
                     <input name="trusted" type="hidden" value={device.trusted ? "false" : "true"} />
-                    <Button type="submit" variant="secondary">
+                    <FormSubmitButton pendingLabel={device.trusted ? "Removing..." : "Saving..."} type="submit" variant="secondary">
                       {device.trusted ? "Remove trust" : "Trust device"}
-                    </Button>
+                    </FormSubmitButton>
                   </form>
                 </div>
               </div>

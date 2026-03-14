@@ -38,3 +38,5 @@ supabase/.temp/
 
 # GitHub workflows temporarily excluded by request
 .github/
+
+.vercel

@@ -1,6 +1,7 @@
 import { customerNavigation } from "@banking/config";
 import { AppShell } from "@banking/ui";
 import type { ReactNode } from "react";
+import { FormSubmitButton } from "../../components/form-submit-button";
 import { signoutAction } from "../(auth)/actions";
 import { requireUser } from "../../lib/auth";
 
@@ -21,12 +22,9 @@ export default async function PortalLayout({
     <AppShell navigation={navigation} title="NextGen Bank">
       <div className="flex justify-end">
         <form action={signoutAction}>
-          <button
-            className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700"
-            type="submit"
-          >
+          <FormSubmitButton pendingLabel="Signing out..." type="submit" variant="secondary">
             Sign out
-          </button>
+          </FormSubmitButton>
         </form>
       </div>
       {children}

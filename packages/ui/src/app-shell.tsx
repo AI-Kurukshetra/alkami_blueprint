@@ -1,6 +1,6 @@
-import Link from "next/link";
 import type { ReactNode } from "react";
 import { cn } from "@banking/utils";
+import { AppShellNavLink } from "./navigation-overlay";
 
 export function AppShell({
   title,
@@ -21,7 +21,7 @@ export function AppShell({
           </div>
           <nav className="space-y-1">
             {navigation.map((item) => (
-              <Link
+              <AppShellNavLink
                 className={cn(
                   "block rounded-2xl px-4 py-3 text-sm text-slate-300 transition hover:bg-white/10 hover:text-white"
                 )}
@@ -29,7 +29,7 @@ export function AppShell({
                 key={item.href}
               >
                 {item.label}
-              </Link>
+              </AppShellNavLink>
             ))}
           </nav>
         </aside>

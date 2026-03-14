@@ -1,7 +1,8 @@
 import { listAuthenticatedAccounts, quoteTransfer } from "@banking/database";
-import { Badge, Button, Card, CardDescription, CardTitle, PageHeader } from "@banking/ui";
+import { Badge, Card, CardDescription, CardTitle, PageHeader } from "@banking/ui";
 import { formatCurrency } from "@banking/utils";
 import { FlashBanner } from "../../../components/flash-banner";
+import { FormSubmitButton } from "../../../components/form-submit-button";
 import { createSupabaseServerClient } from "../../../lib/supabase/server";
 import { submitTransferAction } from "./actions";
 
@@ -84,9 +85,9 @@ export default async function TransfersPage({
             />
             <input className="h-11 rounded-2xl border border-slate-200 px-4 md:col-span-2" min="0.01" name="amount" placeholder="Amount" required step="0.01" type="number" />
             <input className="h-11 rounded-2xl border border-slate-200 px-4 md:col-span-2" name="memo" placeholder="Memo" type="text" />
-            <Button className="md:col-span-2" type="submit">
+            <FormSubmitButton className="md:col-span-2" pendingLabel="Submitting..." type="submit">
               Submit transfer
-            </Button>
+            </FormSubmitButton>
           </form>
           <div className="rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-600">
             Preview: {preview.estimatedDelivery} delivery | risk posture{" "}

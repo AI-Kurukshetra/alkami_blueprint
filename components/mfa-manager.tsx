@@ -36,21 +36,27 @@ export function MfaManager({
 }) {
   const [state, setState] = useState<MfaApiState["data"] | null>(null);
   const [loading, startTransition] = useTransition();
+  const [busyAction, setBusyAction] = useState<
+    "load" | "enroll" | "verify" | "cancel" | "unenroll" | null
+  >(null);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [enrollment, setEnrollment] = useState<EnrollmentState>(null);
   const [code, setCode] = useState("");
 
   const loadState = async () => {
+    setBusyAction("load");
     const response = await fetch("/api/auth/mfa", { method: "GET" });
     const payload = await readJson<MfaApiState>(response);
 
     if (!response.ok || payload.error) {
       setError(payload.error ?? "Unable to load MFA state.");
+      setBusyAction(null);
       return;
     }
 
     setState(payload.data ?? null);
+    setBusyAction(null);
   };
 
   useEffect(() => {
@@ -66,6 +72,7 @@ export function MfaManager({
 
     startTransition(() => {
       void (async () => {
+        setBusyAction("enroll");
         setError(null);
         setMessage(null);
 
@@ -83,6 +90,7 @@ export function MfaManager({
 
         if (!response.ok || payload.error || !payload.data) {
           setError(payload.error ?? "Unable to start MFA enrollment.");
+          setBusyAction(null);
           return;
         }
 
@@ -93,6 +101,7 @@ export function MfaManager({
   }, [autoStart, state?.factors?.totp?.length]);
 
   const handleEnroll = async () => {
+    setBusyAction("enroll");
     setError(null);
     setMessage(null);
 
@@ -110,6 +119,7 @@ export function MfaManager({
 
     if (!response.ok || payload.error || !payload.data) {
       setError(payload.error ?? "Unable to start MFA enrollment.");
+      setBusyAction(null);
       return;
     }
 
@@ -123,6 +133,7 @@ export function MfaManager({
       return;
     }
 
+    setBusyAction("verify");
     setError(null);
     setMessage(null);
 
@@ -141,6 +152,7 @@ export function MfaManager({
 
     if (!response.ok || payload.error) {
       setError(payload.error ?? "Unable to verify MFA code.");
+      setBusyAction(null);
       return;
     }
 
@@ -151,6 +163,7 @@ export function MfaManager({
   };
 
   const handleUnenroll = async (factorId: string) => {
+    setBusyAction("unenroll");
     setError(null);
     setMessage(null);
 
@@ -171,6 +184,7 @@ export function MfaManager({
         payload.error ??
           "Unable to remove MFA. If this factor is already verified, sign in with MFA first and try again."
       );
+      setBusyAction(null);
       return;
     }
 
@@ -203,8 +217,13 @@ export function MfaManager({
         Next level: {state?.assurance?.nextLevel ?? "aal2"}.
       </div>
       {totpFactors.length === 0 && !enrollment ? (
-        <Button disabled={loading} onClick={() => startTransition(() => void handleEnroll())} type="button">
-          Start TOTP setup
+        <Button disabled={loading || busyAction !== null} onClick={() => startTransition(() => void handleEnroll())} type="button">
+          <span className="inline-flex items-center gap-2">
+            {busyAction === "enroll" ? (
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent" />
+            ) : null}
+            {busyAction === "enroll" ? "Starting setup..." : "Start TOTP setup"}
+          </span>
         </Button>
       ) : null}
       {enrollment ? (
@@ -229,14 +248,21 @@ export function MfaManager({
             value={code}
           />
           <div className="flex gap-3">
-            <Button disabled={loading} onClick={() => startTransition(() => void handleVerify())} type="button">
-              Verify MFA
+            <Button disabled={loading || busyAction !== null} onClick={() => startTransition(() => void handleVerify())} type="button">
+              <span className="inline-flex items-center gap-2">
+                {busyAction === "verify" ? (
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent" />
+                ) : null}
+                {busyAction === "verify" ? "Verifying..." : "Verify MFA"}
+              </span>
             </Button>
             <Button
-              disabled={loading}
+              disabled={loading || busyAction !== null}
               onClick={() => {
+                setBusyAction("cancel");
                 setEnrollment(null);
                 setCode("");
+                setBusyAction(null);
               }}
               type="button"
               variant="ghost"
@@ -257,12 +283,17 @@ export function MfaManager({
                 <p className="text-sm text-slate-500">Status: {factor.status}</p>
               </div>
               <Button
-                disabled={loading}
+                disabled={loading || busyAction !== null}
                 onClick={() => startTransition(() => void handleUnenroll(factor.id))}
                 type="button"
                 variant="secondary"
               >
-                Remove MFA
+                <span className="inline-flex items-center gap-2">
+                  {busyAction === "unenroll" ? (
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent" />
+                  ) : null}
+                  {busyAction === "unenroll" ? "Removing..." : "Remove MFA"}
+                </span>
               </Button>
             </div>
           ))}
