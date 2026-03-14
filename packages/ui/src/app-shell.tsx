@@ -23,7 +23,7 @@ export function AppShell({
             {navigation.map((item) => (
               <AppShellNavLink
                 className={cn(
-                  "block rounded-2xl px-4 py-3 text-sm text-slate-300 transition hover:bg-white/10 hover:text-white"
+                  "block rounded-2xl px-4 py-3 text-sm text-slate-300 transition hover:bg-white/10 hover:text-white data-[active=true]:bg-sky-300 data-[active=true]:text-slate-950 data-[active=true]:shadow-[0_14px_34px_-18px_rgba(125,211,252,0.95)] data-[active=true]:ring-1 data-[active=true]:ring-white/70"
                 )}
                 href={item.href}
                 key={item.href}

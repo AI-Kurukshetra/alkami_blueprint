@@ -65,6 +65,8 @@ export function AppShellNavLink({
 }) {
   const pathname = usePathname();
   const context = useContext(NavigationOverlayContext);
+  const isActive =
+    pathname === href || (href !== "/dashboard" && pathname.startsWith(`${href}/`));
 
   function handleClick(event: MouseEvent<HTMLAnchorElement>) {
     if (
@@ -86,7 +88,13 @@ export function AppShellNavLink({
   }
 
   return (
-    <Link className={className} href={href} onClick={handleClick}>
+    <Link
+      aria-current={isActive ? "page" : undefined}
+      className={className}
+      data-active={isActive ? "true" : "false"}
+      href={href}
+      onClick={handleClick}
+    >
       {children}
     </Link>
   );
