@@ -2,17 +2,28 @@ import type {
   Account,
   AuditLog,
   Bill,
+  BusinessMembership,
+  BusinessProfile,
+  BudgetTarget,
+  BudgetInsight,
   Card,
+  CreditProfile,
+  CreditScoreSnapshot,
   DashboardSnapshot,
   DeviceSession,
   FraudEvent,
   Loan,
   LoanWithSchedule,
   NotificationItem,
+  P2PContact,
+  P2PTransfer,
+  SavingsRule,
   StatementDocument,
   SupportTicket,
   Transaction,
-  UserProfile
+  UserProfile,
+  WalletToken,
+  WireTransfer
 } from "@banking/types";
 
 const accountOwnerId = "11111111-1111-1111-1111-111111111111";
@@ -251,6 +262,202 @@ export const mockDocuments: StatementDocument[] = [
     storagePath: "statements/2026-02-savings.pdf",
     status: "available",
     createdAt: "2026-03-01T00:00:00.000Z"
+  },
+  {
+    id: "doc-03",
+    userId: accountOwnerId,
+    documentType: "account-summary",
+    storagePath: "documents/account-summary-march-2026.pdf",
+    status: "available",
+    createdAt: "2026-03-14T00:00:00.000Z"
+  },
+  {
+    id: "doc-04",
+    userId: accountOwnerId,
+    documentType: "initial-disclosure",
+    storagePath: "documents/initial-disclosure.pdf",
+    status: "available",
+    createdAt: "2025-09-01T00:00:00.000Z"
+  }
+];
+
+export const mockBudgetTargets: BudgetTarget[] = [
+  {
+    id: "budget-01",
+    userId: accountOwnerId,
+    category: "Dining",
+    limitAmount: 450,
+    period: "monthly",
+    alertThreshold: 0.8,
+    active: true,
+    createdAt: "2026-03-01T00:00:00.000Z"
+  },
+  {
+    id: "budget-02",
+    userId: accountOwnerId,
+    category: "Transport",
+    limitAmount: 300,
+    period: "monthly",
+    alertThreshold: 0.85,
+    active: true,
+    createdAt: "2026-03-01T00:00:00.000Z"
+  }
+];
+
+export const mockBudgetInsights: BudgetInsight[] = [
+  {
+    category: "Dining",
+    limitAmount: 450,
+    spentAmount: 286,
+    remainingAmount: 164,
+    utilization: 0.64,
+    status: "on_track"
+  },
+  {
+    category: "Transport",
+    limitAmount: 300,
+    spentAmount: 242,
+    remainingAmount: 58,
+    utilization: 0.81,
+    status: "watch"
+  }
+];
+
+export const mockSavingsRules: SavingsRule[] = [
+  {
+    id: "save-rule-01",
+    userId: accountOwnerId,
+    sourceAccountId: "acc-checking-01",
+    destinationAccountId: "acc-savings-01",
+    ruleType: "recurring",
+    amount: 250,
+    cadence: "monthly",
+    active: true,
+    nextRunAt: "2026-04-01T09:00:00.000Z",
+    createdAt: "2026-03-01T00:00:00.000Z"
+  }
+];
+
+export const mockP2PContacts: P2PContact[] = [
+  {
+    id: "p2p-contact-01",
+    userId: accountOwnerId,
+    displayName: "Jane Smith",
+    handle: "@jane",
+    destinationReference: "jane-smith@instantpay",
+    status: "active",
+    createdAt: "2026-03-01T00:00:00.000Z"
+  }
+];
+
+export const mockP2PTransfers: P2PTransfer[] = [
+  {
+    id: "p2p-transfer-01",
+    userId: accountOwnerId,
+    contactId: "p2p-contact-01",
+    fromAccountId: "acc-checking-01",
+    amount: 42.5,
+    direction: "sent",
+    status: "completed",
+    note: "Dinner split",
+    createdAt: "2026-03-12T19:00:00.000Z",
+    completedAt: "2026-03-12T19:01:00.000Z"
+  }
+];
+
+export const mockBusinessProfiles: BusinessProfile[] = [
+  {
+    id: "biz-01",
+    userId: accountOwnerId,
+    businessName: "Oak Street Studio",
+    legalName: "Oak Street Studio LLC",
+    industry: "Professional Services",
+    taxIdMasked: "**-***8421",
+    status: "active",
+    createdAt: "2026-02-10T00:00:00.000Z"
+  }
+];
+
+export const mockBusinessMemberships: BusinessMembership[] = [
+  {
+    id: "biz-member-01",
+    businessProfileId: "biz-01",
+    userId: accountOwnerId,
+    membershipRole: "owner",
+    status: "active",
+    createdAt: "2026-02-10T00:00:00.000Z"
+  }
+];
+
+export const mockWireTransfers: WireTransfer[] = [
+  {
+    id: "wire-01",
+    userId: accountOwnerId,
+    fromAccountId: "acc-checking-01",
+    beneficiaryName: "Evergreen Escrow",
+    beneficiaryBank: "First National Bank",
+    routingNumberMasked: "*****1023",
+    accountNumberLast4: "5567",
+    amount: 1250,
+    purpose: "Property deposit",
+    status: "pending",
+    reviewStatus: "pending_review",
+    createdAt: "2026-03-14T09:00:00.000Z",
+    submittedAt: "2026-03-14T09:00:00.000Z"
+  }
+];
+
+export const mockCreditProfile: CreditProfile = {
+  id: "credit-profile-01",
+  userId: accountOwnerId,
+  provider: "TransUnion",
+  score: 742,
+  scoreBand: "good",
+  updatedAt: "2026-03-10T00:00:00.000Z"
+};
+
+export const mockCreditScoreSnapshots: CreditScoreSnapshot[] = [
+  {
+    id: "credit-snap-01",
+    userId: accountOwnerId,
+    score: 728,
+    reasonCodes: ["High card utilization", "Thin installment mix"],
+    recordedAt: "2026-01-10T00:00:00.000Z"
+  },
+  {
+    id: "credit-snap-02",
+    userId: accountOwnerId,
+    score: 735,
+    reasonCodes: ["Improving utilization", "On-time payment streak"],
+    recordedAt: "2026-02-10T00:00:00.000Z"
+  },
+  {
+    id: "credit-snap-03",
+    userId: accountOwnerId,
+    score: 742,
+    reasonCodes: ["Low delinquency risk", "Stable account age"],
+    recordedAt: "2026-03-10T00:00:00.000Z"
+  }
+];
+
+export const mockWalletTokens: WalletToken[] = [
+  {
+    id: "wallet-01",
+    userId: accountOwnerId,
+    cardId: "card-01",
+    provider: "apple_pay",
+    deviceLabel: "iPhone 16 Pro",
+    status: "active",
+    createdAt: "2026-03-01T00:00:00.000Z"
+  },
+  {
+    id: "wallet-02",
+    userId: accountOwnerId,
+    cardId: "card-02",
+    provider: "google_pay",
+    deviceLabel: "Pixel Fold",
+    status: "pending",
+    createdAt: "2026-03-11T00:00:00.000Z"
   }
 ];
 

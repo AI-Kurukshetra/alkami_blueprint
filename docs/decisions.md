@@ -75,3 +75,23 @@ Reason:
 Tradeoffs:
 - Mutation logic now depends on database migrations staying in lockstep with deployed app code.
 - Some richer client interactions may later need optimistic UI or TanStack Query invalidation on top of these server actions.
+
+## Decision 9 - Start Phase 2 with personal finance extensions before institution-grade rails
+Reason:
+- Document portal, budgeting, and savings automation reuse the existing customer session, transaction history, and statement artifacts with low architectural risk.
+- These modules add visible product depth quickly while avoiding premature complexity around business accounts, wires, or networked P2P settlement.
+- The same typed query layer can expose budget analytics and automation rules without splitting the app into new services yet.
+
+Tradeoffs:
+- Phase 2 starts with customer self-service depth rather than the highest operational leverage modules.
+- Savings automation remains configuration-first until a scheduled execution worker is added in a later increment.
+
+## Decision 10 - Keep the remaining Phase 2 modules in the same shared query layer
+Reason:
+- P2P, business onboarding, wires, credit, wallets, fraud automation, and document ingestion all need the same user/session context and Postgres-side policy checks as Phase 1.
+- A shared typed query layer keeps customer pages, admin review flows, and API handlers consistent while avoiding duplicated Supabase access code.
+- Admin-only review actions can still use the service-role client behind explicit route and server-action authorization.
+
+Tradeoffs:
+- The query package now owns more orchestration logic, so later extraction into dedicated workers or edge functions will require careful decomposition.
+- Some “scheduled” Phase 2 workflows are currently operator- or user-triggered execution engines rather than background cron jobs.

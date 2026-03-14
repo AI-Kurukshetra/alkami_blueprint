@@ -122,6 +122,125 @@ export interface StatementDocument {
   createdAt: string;
 }
 
+export interface P2PContact {
+  id: string;
+  userId: string;
+  displayName: string;
+  handle: string;
+  destinationReference: string;
+  status: "active" | "pending" | "blocked";
+  createdAt: string;
+}
+
+export interface P2PTransfer {
+  id: string;
+  userId: string;
+  contactId: string;
+  fromAccountId: string;
+  amount: number;
+  direction: "sent" | "requested";
+  status: TransferStatus;
+  note: string | null;
+  createdAt: string;
+  completedAt: string | null;
+}
+
+export interface BusinessProfile {
+  id: string;
+  userId: string;
+  businessName: string;
+  legalName: string;
+  industry: string;
+  taxIdMasked: string;
+  status: "active" | "pending_review" | "inactive";
+  createdAt: string;
+}
+
+export interface BusinessMembership {
+  id: string;
+  businessProfileId: string;
+  userId: string;
+  membershipRole: "owner" | "operator" | "viewer";
+  status: "active" | "invited" | "disabled";
+  createdAt: string;
+}
+
+export interface BudgetTarget {
+  id: string;
+  userId: string;
+  category: string;
+  limitAmount: number;
+  period: "monthly";
+  alertThreshold: number;
+  active: boolean;
+  createdAt: string;
+}
+
+export interface BudgetInsight {
+  category: string;
+  limitAmount: number;
+  spentAmount: number;
+  remainingAmount: number;
+  utilization: number;
+  status: "on_track" | "watch" | "over_budget";
+}
+
+export interface SavingsRule {
+  id: string;
+  userId: string;
+  sourceAccountId: string;
+  destinationAccountId: string;
+  ruleType: "roundup" | "recurring" | "percentage";
+  amount: number;
+  cadence: "weekly" | "biweekly" | "monthly" | "per_transaction";
+  active: boolean;
+  nextRunAt: string | null;
+  createdAt: string;
+}
+
+export interface WireTransfer {
+  id: string;
+  userId: string;
+  fromAccountId: string;
+  beneficiaryName: string;
+  beneficiaryBank: string;
+  routingNumberMasked: string;
+  accountNumberLast4: string;
+  amount: number;
+  purpose: string;
+  status: TransferStatus;
+  reviewStatus: "pending_review" | "approved" | "flagged";
+  createdAt: string;
+  submittedAt: string | null;
+}
+
+export interface CreditProfile {
+  id: string;
+  userId: string;
+  provider: string;
+  score: number;
+  scoreBand: "excellent" | "good" | "fair" | "poor";
+  updatedAt: string;
+}
+
+export interface CreditScoreSnapshot {
+  id: string;
+  userId: string;
+  score: number;
+  reasonCodes: string[];
+  recordedAt: string;
+}
+
+export interface WalletToken {
+  id: string;
+  userId: string;
+  cardId: string;
+  provider: "apple_pay" | "google_pay";
+  deviceLabel: string;
+  status: "active" | "suspended" | "pending";
+  createdAt: string;
+}
+
 export interface SupportTicket {
   id: string;
   userId: string;
@@ -139,6 +258,7 @@ export interface FraudEvent {
   severity: FraudSeverity;
   ruleName: string;
   status: "open" | "reviewing" | "closed";
+  payload?: Record<string, unknown>;
   detectedAt: string;
 }
 

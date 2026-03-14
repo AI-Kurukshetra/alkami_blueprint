@@ -5,6 +5,8 @@ import {
 } from "@banking/database";
 import { createSupabaseServerClient } from "../../../../lib/supabase/server";
 
+export const dynamic = "force-dynamic";
+
 type DocumentKind = "statement" | "account-summary" | "initial-disclosure";
 
 function escapePdfText(value: string) {

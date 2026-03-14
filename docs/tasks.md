@@ -102,15 +102,59 @@
 - [x] Add end-to-end auth and dashboard coverage
 
 ## Phase 2 - Expanded Platform
-- [ ] P2P payments
-- [ ] Business accounts
-- [ ] Document portal
-- [ ] Wire transfers
-- [ ] Budgeting tools
-- [ ] Credit score monitoring
-- [ ] Fraud detection automation
-- [ ] Digital wallets
-- [ ] Savings automation
+### P2P Payments
+- [x] Design contacts and peer transfer schema
+- [x] Add P2P contacts API
+- [x] Build send/request money UI
+- [x] Add P2P activity ledger and notifications
+
+### Business Accounts
+- [x] Design business profile and delegated user schema
+- [x] Add business account onboarding flows
+- [x] Build business account summary UI
+- [x] Add role-based business operator access controls
+
+### Document Portal
+- [x] Expand authenticated document listing API
+- [x] Build dedicated document portal UI
+- [x] Add document-type filtering and download actions
+- [x] Add secure storage-backed document ingestion workflow
+
+### Wire Transfers
+- [x] Design wire instruction and approval schema
+- [x] Add domestic wire initiation flow
+- [x] Add wire approval and status timeline UI
+- [x] Add compliance screening hooks for wire instructions
+
+### Budgeting Tools
+- [x] Design budgets schema and category targets
+- [x] Add budget insights query service
+- [x] Build budgeting dashboard and create/update flow
+- [x] Add variance alerts and month rollover workflow
+
+### Credit Score Monitoring
+- [x] Design credit profile and score snapshot schema
+- [x] Add credit score dashboard module
+- [x] Add score history and factor insights UI
+- [x] Add score-change notifications
+
+### Fraud Detection Automation
+- [x] Add fraud rule execution pipeline
+- [x] Add event triage states and review actions
+- [x] Trigger customer-visible step-up verification flows
+- [x] Add fraud operations dashboard metrics
+
+### Digital Wallets
+- [x] Design wallet tokenization and device enrollment schema
+- [x] Add wallet provisioning status UI
+- [x] Add Apple Pay / Google Pay enrollment hooks
+- [x] Add wallet suspension controls
+
+### Savings Automation
+- [x] Design savings rule schema
+- [x] Build savings automation setup UI
+- [x] Add create/update savings rule flow
+- [x] Add scheduled execution engine for recurring transfers
 
 ## Phase 3 - Advanced Platform
 - [ ] AI financial insights production service

@@ -30,6 +30,12 @@ Request body:
 ### `POST /api/transfers/quote`
 Returns delivery and risk posture for a transfer before execution.
 
+### `GET /api/p2p`
+Returns the authenticated user's peer payment contacts and activity.
+
+### `POST /api/p2p`
+Creates either a new P2P contact or a send/request money record.
+
 ### `GET /api/bills`
 Returns scheduled and recurring bills for the authenticated user.
 
@@ -50,6 +56,54 @@ Returns active loans and upcoming payment information.
 
 ### `GET /api/loans/schedule`
 Returns loan payment schedules and amortization previews.
+
+### `GET /api/documents`
+Returns the authenticated user's document catalog.
+
+### `GET /api/documents/download?documentId=<uuid>`
+Streams a private uploaded document from Supabase Storage.
+
+### `GET /api/budgets`
+Returns monthly budget targets and utilization insights.
+
+### `POST /api/budgets`
+Creates or updates a monthly budget target.
+
+### `GET /api/savings-rules`
+Returns savings automation rules for the authenticated user.
+
+### `POST /api/savings-rules`
+Creates a new savings automation rule.
+
+### `PATCH /api/savings-rules`
+Pauses or resumes a savings automation rule.
+
+### `GET /api/business`
+Returns business profiles and delegated memberships visible to the authenticated user.
+
+### `POST /api/business`
+Creates a business profile or adds a delegated business member.
+
+### `GET /api/wires`
+Returns domestic wire transfer history for the authenticated user.
+
+### `POST /api/wires`
+Initiates a domestic wire transfer and may place it into manual review.
+
+### `GET /api/credit-score`
+Returns the current credit profile and historical score snapshots.
+
+### `POST /api/credit-score`
+Refreshes the authenticated user's credit profile and appends a new score snapshot.
+
+### `GET /api/wallets`
+Returns the authenticated user's digital wallet enrollments.
+
+### `POST /api/wallets`
+Starts a new Apple Pay or Google Pay enrollment request.
+
+### `PATCH /api/wallets`
+Activates or suspends an existing wallet token.
 
 ### `GET /api/notifications`
 Returns in-app notifications sorted by recency.
@@ -97,6 +151,12 @@ Returns account inventory and account status for admin users.
 
 ### `GET /api/admin/fraud`
 Returns fraud events, severity, and review status.
+
+### `POST /api/admin/fraud`
+Runs the fraud rule pipeline across recent customer activity.
+
+### `PATCH /api/admin/fraud`
+Updates fraud event states or approves/flags wires that are in review.
 
 ### `GET /api/admin/compliance`
 Returns audit log entries and compliance event summaries.

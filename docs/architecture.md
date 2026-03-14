@@ -12,18 +12,21 @@
 ## Runtime Architecture
 ### Client Layer
 - Next.js server components render both retail and `/admin` shells from a single deployment.
+- Phase 2 customer surfaces extend the portal with dedicated documents, budgeting, savings, P2P, business banking, wire transfer, credit monitoring, and wallet routes.
 - TanStack Query hydrates client-side interactions for mutation-heavy flows.
 - Tailwind CSS and shared UI primitives keep retail and operator surfaces consistent.
 
 ### API Layer
 - Route handlers under `app/api/*` expose banking resources.
 - Route handlers under `app/api/admin/*` expose operator workflows.
+- Phase 2 route handlers now expose P2P payments, business onboarding, wire transfers, credit monitoring, wallet enrollment, document downloads, and fraud automation controls.
 - Zod validates all API inputs and response shaping boundaries.
 
 ### Data Layer
 - Supabase Postgres stores customer, account, payment, and compliance data.
+- Phase 2 extends the relational model with budgets, savings rules, P2P contacts/transfers, business profiles/memberships, wire transfers, credit score snapshots, and wallet tokens.
 - Supabase Auth manages identities and session lifecycle.
-- Supabase Storage holds statements and document artifacts.
+- Supabase Storage holds statements, generated PDFs, and private user-uploaded document artifacts.
 - Supabase RLS enforces tenant boundaries by default.
 - Supabase Edge Functions host fraud and insights workflows.
 - Shared query services return typed fallback data until Supabase environment variables and authenticated request context are available.
@@ -33,6 +36,7 @@
 - RLS defaults to deny; policies explicitly grant per-user or admin access.
 - `public.is_admin()` is used by policies for staff overrides.
 - Audit logs, device sessions, and fraud events provide traceability.
+- Fraud automation can place customers into a step-up-required posture for outbound P2P and wire activity until admin review closes the event.
 - MFA and trusted-device flows are exposed through unified auth routes and reflected in schema and docs.
 
 ## Deployment Model
