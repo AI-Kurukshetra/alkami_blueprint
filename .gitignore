@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+
+# Next.js / build outputs
+.next/
+out/
+dist/
+.turbo/
+.vercel/
+*.tsbuildinfo
+
+# Testing / coverage
+coverage/
+playwright-report/
+test-results/
+
+# Environment / secrets
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+.env.test
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+
+# Local Supabase state
+supabase/.temp/
+
+# GitHub workflows temporarily excluded by request
+.github/

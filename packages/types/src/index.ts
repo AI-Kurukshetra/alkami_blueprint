@@ -1,0 +1,203 @@
+export type UserRole = "customer" | "admin";
+
+export type AccountType = "checking" | "savings" | "money_market" | "credit";
+export type RecordStatus = "active" | "inactive" | "blocked" | "closed";
+export type TransactionDirection = "debit" | "credit";
+export type TransactionType =
+  | "purchase"
+  | "deposit"
+  | "payment"
+  | "transfer"
+  | "fee"
+  | "refund"
+  | "interest"
+  | "withdrawal";
+export type TransferStatus = "pending" | "completed" | "failed" | "cancelled";
+export type BillStatus = "scheduled" | "paid" | "overdue" | "cancelled";
+export type CardType = "debit" | "credit";
+export type LoanType = "mortgage" | "auto" | "personal" | "student";
+export type SupportStatus = "open" | "pending" | "resolved";
+export type FraudSeverity = "low" | "medium" | "high" | "critical";
+
+export interface UserProfile {
+  id: string;
+  email: string;
+  name: string;
+  role: UserRole;
+  createdAt: string;
+}
+
+export interface Account {
+  id: string;
+  userId: string;
+  accountType: AccountType;
+  nickname: string;
+  accountNumber: string;
+  balance: number;
+  availableBalance: number;
+  currency: string;
+  status: RecordStatus;
+  createdAt: string;
+}
+
+export interface Transaction {
+  id: string;
+  accountId: string;
+  amount: number;
+  direction: TransactionDirection;
+  type: TransactionType;
+  category: string;
+  description: string;
+  merchantName: string | null;
+  postedAt: string;
+}
+
+export interface Transfer {
+  id: string;
+  fromAccountId: string;
+  toAccountId: string;
+  amount: number;
+  status: TransferStatus;
+  memo: string | null;
+  createdAt: string;
+}
+
+export interface Bill {
+  id: string;
+  userId: string;
+  payeeName: string;
+  amount: number;
+  dueDate: string;
+  status: BillStatus;
+  frequency: string;
+}
+
+export interface Card {
+  id: string;
+  userId: string;
+  accountId: string;
+  cardType: CardType;
+  network: string;
+  last4: string;
+  status: RecordStatus;
+  spendLimit: number | null;
+}
+
+export interface Loan {
+  id: string;
+  userId: string;
+  loanType: LoanType;
+  balance: number;
+  originalAmount: number;
+  interestRate: number;
+  nextPaymentDate: string;
+  status: RecordStatus;
+}
+
+export interface NotificationItem {
+  id: string;
+  userId: string;
+  type: string;
+  message: string;
+  read: boolean;
+  createdAt: string;
+}
+
+export interface DeviceSession {
+  id: string;
+  userId: string;
+  deviceFingerprint: string;
+  userAgent: string;
+  trusted: boolean;
+  lastSeenAt: string;
+  createdAt: string;
+}
+
+export interface StatementDocument {
+  id: string;
+  userId: string;
+  documentType: string;
+  storagePath: string;
+  status: string;
+  createdAt: string;
+}
+
+export interface SupportTicket {
+  id: string;
+  userId: string;
+  subject: string;
+  status: SupportStatus;
+  priority: "low" | "medium" | "high";
+  latestMessage: string;
+  createdAt: string;
+}
+
+export interface FraudEvent {
+  id: string;
+  userId: string | null;
+  accountId: string | null;
+  severity: FraudSeverity;
+  ruleName: string;
+  status: "open" | "reviewing" | "closed";
+  detectedAt: string;
+}
+
+export interface AuditLog {
+  id: string;
+  userId: string | null;
+  action: string;
+  entity: string;
+  entityId: string | null;
+  timestamp: string;
+}
+
+export interface FinancialGoal {
+  id: string;
+  userId: string;
+  name: string;
+  currentAmount: number;
+  targetAmount: number;
+  targetDate: string;
+}
+
+export interface LoanPaymentScheduleItem {
+  installment: number;
+  paymentDate: string;
+  principal: number;
+  interest: number;
+  balance: number;
+}
+
+export interface LoanWithSchedule extends Loan {
+  monthlyPayment: number;
+  amortization: LoanPaymentScheduleItem[];
+}
+
+export interface TransferQuote {
+  fromAccountId: string;
+  toAccountId?: string;
+  externalDestination?: string;
+  amount: number;
+  memo?: string;
+  rail: "internal" | "ach";
+  estimatedDelivery: string;
+  risk: "approved" | "review";
+}
+
+export interface ChatMessage {
+  id: string;
+  author: "customer" | "agent" | "system";
+  body: string;
+  createdAt: string;
+}
+
+export interface DashboardSnapshot {
+  netWorth: number;
+  monthToDateSpend: number;
+  upcomingBills: number;
+  cashFlow: number;
+  accounts: Account[];
+  recentTransactions: Transaction[];
+  financialGoals: FinancialGoal[];
+  notifications: NotificationItem[];
+}
